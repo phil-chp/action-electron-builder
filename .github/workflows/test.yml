@@ -29,6 +29,19 @@ jobs:
           cd ${{ matrix.package_root }}
           ${{ matrix.package_manager }} install
 
+      - name: Make sure PYTHON_ENV is set for npm in macos
+        if: ${{ startsWith(matrix.os, 'macos-') && matrix.package_manager == 'npm' }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+
+      - name: Make more sure PYTHON_ENV is set for npm in macos
+        if: ${{ startsWith(matrix.os, 'macos-') && matrix.package_manager == 'npm' }}
+        run: |
+          command -v python || :
+          command -v python3 || :
+          echo "PYTHON_ENV=$(command -v python)" >> $GITHUB_OUTPUT
+
       - name: Run action
         uses: ./
         with:
