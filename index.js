@@ -69,6 +69,8 @@ const runAction = () => {
 	const pkgRoot = getInput("package_root", true);
 	const buildScriptName = getInput("build_script_name", true);
 	const skipBuild = getInput("skip_build") === "true";
+	const skipInstall = getInput("skip_install") === "true";
+
 	const useVueCli = getInput("use_vue_cli") === "true";
 	const args = getInput("args") || "";
 	const maxAttempts = Number(getInput("max_attempts") || "1");
@@ -104,9 +106,12 @@ const runAction = () => {
 
 	// Disable console advertisements during install phase
 	setEnv("ADBLOCK", true);
-
-	log(`Installing dependencies using ${useNpm ? "NPM" : "Yarn"}…`);
-	run(useNpm ? "npm install" : "yarn", pkgRoot);
+	if (skipInstall) {
+		log("Skipping install script because `skip_install` option is set");
+	} else {
+		log(`Installing dependencies using ${useNpm ? "NPM" : "Yarn"}…`);
+		run(useNpm ? "npm install" : "yarn", pkgRoot);
+	}
 
 	// Run NPM build script if it exists
 	if (skipBuild) {
@@ -132,7 +137,7 @@ const runAction = () => {
 			run(
 				`${useNpm ? "npx --no-install" : "yarn run"} ${cmd} --${platform} ${
 					release ? "--publish always" : ""
-				} ${args}`,
+				} ${(platform == "mac") ? "--arm64 --x64" : ""}	${args}`,
 				appRoot,
 			);
 			break;

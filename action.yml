@@ -1,5 +1,5 @@
-name: Macro Electron Builder Action
-author: William Hutchinson
+name: Electron Builder Action (Maintened)
+author: Johannes M & YanJobs & Samuel Meuli & William Hutchinson
 description: GitHub Action for building and releasing Electron apps
 
 inputs:
@@ -32,6 +32,10 @@ inputs:
     default: build
   skip_build:
     description: Whether the action should execute the NPM build script before running `electron-builder`
+    required: false
+    default: false
+  skip_install:
+    description: Whether the action should execute NPM install script
     required: false
     default: false
   use_vue_cli:

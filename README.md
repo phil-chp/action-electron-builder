@@ -8,7 +8,7 @@ GitHub Actions allows you to build your app on macOS, Windows and Linux without 
 
 ## Setup
 
-1. **Install and configure `electron-builder`** (v22+) in your Electron app. You can read about this in [the project's docs](https://www.electron.build) or in [my blog post](https://samuelmeuli.com/blog/2019-04-07-packaging-and-publishing-an-electron-app).
+1. **Install and configure `electron-builder`** (v22+) in your Electron app. You can read about this in [the project's docs](https://www.electron.build) or in [Samuel's blog post](https://samuelmeuli.com/blog/2019-04-07-packaging-and-publishing-an-electron-app).
 
 2. If you need to compile code (e.g. TypeScript to JavaScript or Sass to CSS), make sure this is done using a **`build` script in your `package.json` file**. The action will execute that script before packaging your app. However, **make sure that the `build` script does _not_ run `electron-builder`**, as this action will do that for you.
 
@@ -34,10 +34,10 @@ GitHub Actions allows you to build your app on macOS, Windows and Linux without 
          - name: Install Node.js, NPM and Yarn
            uses: actions/setup-node@v1
            with:
-             node-version: 10
+             node-version: 16
 
          - name: Build/release Electron app
-           uses: samuelmeuli/action-electron-builder@v1
+           uses: Yan-Jobs/action-electron-builder@v1.7.0
            with:
              # GitHub token, automatically provided to the action
              # (No need to define this secret in the repo settings)
@@ -47,7 +47,7 @@ GitHub Actions allows you to build your app on macOS, Windows and Linux without 
              # release the app after building
              release: ${{ startsWith(github.ref, 'refs/tags/v') }}
    ```
-
+- On macOS it will also create an arm release for your M1/M2 users
 ## Usage
 
 ### Building
@@ -74,6 +74,7 @@ You can configure the action further with the following options:
 - `package_root`: Directory where NPM/Yarn commands should be run (default: `"."`)
 - `build_script_name`: Name of the optional NPM build script which is executed before `electron-builder` (default: `"build"`)
 - `skip_build`: Whether the action should execute the NPM build script before running `electron-builder`
+- `skip_install`: Whether the action should execute the NPM install script before running build.
 - `use_vue_cli`: Whether to run `electron-builder` using the [Vue CLI plugin](https://nklayman.github.io/vue-cli-plugin-electron-builder) instead of calling the command directly
 - `args`: Other arguments to pass to the `electron-builder` command, e.g. configuration overrides (default: `""`)
 - `max_attempts`: Maximum number of attempts for completing the build and release step (default: `1`)
