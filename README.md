@@ -13,7 +13,7 @@ GitHub Actions allows you to build your app on macOS, Windows and Linux without 
 
 ## Setup
 
-1. **Install and configure `electron-builder`** (v22+) in your Electron app. You can read about this in [the project's docs](https://www.electron.build) or in [Samuel's blog post](https://samuelmeuli.com/blog/2019-04-07-packaging-and-publishing-an-electron-app).
+1. **Install and configure `electron-builder`** (v22+) in your Electron app. You can read about this in [the project's docs](https://www.electron.build) or in [Samuel's blog post](https://johannesjo.com/blog/2019-04-07-packaging-and-publishing-an-electron-app).
 
 2. If you need to compile code (e.g. TypeScript to JavaScript or Sass to CSS), make sure this is done using a **`build` script in your `package.json` file**. The action will execute that script before packaging your app. However, **make sure that the `build` script does _not_ run `electron-builder`**, as this action will do that for you.
 
@@ -88,7 +88,7 @@ See [`action.yml`](./action.yml) for a list of all possible input variables.
 
 ### Code Signing
 
-If you are building for **macOS**, you'll want your code to be [signed](https://samuelmeuli.com/blog/2019-04-07-packaging-and-publishing-an-electron-app/#code-signing). GitHub Actions therefore needs access to your code signing certificates:
+If you are building for **macOS**, you'll want your code to be [signed](https://johannesjo.com/blog/2019-04-07-packaging-and-publishing-an-electron-app/#code-signing). GitHub Actions therefore needs access to your code signing certificates:
 
 - Open the Keychain Access app or the Apple Developer Portal. Export all certificates related to your app into a _single_ file (e.g. `certs.p12`) and set a strong password
 - Base64-encode your certificates using the following command: `base64 -i certs.p12 -o encoded.txt`
@@ -100,7 +100,7 @@ Add the following options to your workflow's existing `action-electron-builder` 
 
 ```yml
 - name: Build/release Electron app
-  uses: samuelmeuli/action-electron-builder@v1
+  uses: johannesjo/action-electron-builder@v1
   with:
     # ...
     mac_certs: ${{ secrets.mac_certs }}
@@ -111,7 +111,7 @@ The same goes for **Windows** code signing (`windows_certs` and `windows_certs_p
 
 ### Notarization
 
-If you've configured `electron-builder` to notarize your Electron Mac app [as described in this guide](https://samuelmeuli.com/blog/2019-12-28-notarizing-your-electron-app), you can use the following steps to let GitHub Actions perform the notarization for you:
+If you've configured `electron-builder` to notarize your Electron Mac app [as described in this guide](https://johannesjo.com/blog/2019-12-28-notarizing-your-electron-app), you can use the following steps to let GitHub Actions perform the notarization for you:
 
 1.  Define the following secrets in your repository's settings on GitHub:
 
@@ -134,7 +134,7 @@ If you've configured `electron-builder` to notarize your Electron Mac app [as de
 
     ```yml
     - name: Build/release Electron app
-      uses: samuelmeuli/action-electron-builder@v1
+      uses: johannesjo/action-electron-builder@v1
       with:
         # ...
       env:

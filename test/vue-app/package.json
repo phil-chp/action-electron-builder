@@ -3,9 +3,9 @@
 	"version": "0.1.0",
 	"author": {
 		"email": "matthew@rathbonelabs.com",
-		"url": "https://github.com/samuelmeuli/action-electron-builder"
+		"url": "https://github.com/johannesjo/action-electron-builder"
 	},
-	"repository": "https://github.com/samuelmeuli/action-electron-builder",
+	"repository": "https://github.com/johannesjo/action-electron-builder",
 	"private": true,
 	"scripts": {
 		"serve": "vue-cli-service serve",
