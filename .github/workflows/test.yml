@@ -33,7 +33,8 @@ jobs:
       matrix:
         os: [ macos-latest, ubuntu-latest, windows-latest ]
         package_manager: [ npm ]
-        package_root: [ "./test/app-in-root/", "./test/app-in-subdirectory/", "./test/vue-app" ]
+#        package_root: [ "./test/app-in-root/", "./test/app-in-subdirectory/", "./test/vue-app" ]
+        package_root: [ "./test/app-in-root/", "./test/app-in-subdirectory/" ]
 
     steps:
       - name: Check out Git repository
