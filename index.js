@@ -156,7 +156,7 @@ const runAction = () => {
 		log("Skipping build script because `skip_build` option is set");
 	} else {
 		log("Running the build script…");
-		if (pacMan != PackageManager.YARN) {
+		if (pacMan !== PackageManager.YARN) {
 			run(`${pacMan} run --if-present ${buildScriptName}`, pkgRoot);
 		} else {
 			// TODO: Use `yarn run ${buildScriptName} --if-present` once supported
@@ -173,7 +173,7 @@ const runAction = () => {
 	const builder = useVueCli ? "vue-cli-service electron:build" : "electron-builder";
 	const flags = `--${platform} ${release ? "--publish always" : ""}`;
 
-	if (pacMan == PackageManager.NPM) {
+	if (pacMan === PackageManager.NPM) {
 		cmd = "npx --no-install";
 	} else if (PackageManager.YARN) {
 		cmd = "yarn run";
