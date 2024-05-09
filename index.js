@@ -125,8 +125,7 @@ const runAction = () => {
 	if (pacMan === PackageManager.NONE) {
 		exit("No lock file found and no fallback package manager specified. Please first install your dependencies (i.e. `npm install`)");
 	}
-	log(`Will run ${PackageManager[pacMan]} commands in directory "${pkgRoot}"`);
-	return;
+	log(`Will run ${pacMan} commands in directory "${pkgRoot}"`);
 
 	// Copy "github_token" input variable to "GH_TOKEN" env variable (required by `electron-builder`)
 	setEnv("GH_TOKEN", getInput("github_token", true));
@@ -146,8 +145,8 @@ const runAction = () => {
 	if (skipInstall) {
 		log("Skipping install script because `skip_install` option is set");
 	} else {
-		log(`Installing dependencies using ${pacMan ? "NPM" : "Yarn"}…`);
-		run(pacMan ? "npm install" : "yarn", pkgRoot);
+		log(`Installing dependencies using ${pacMan}…`);
+		run(`${pacMan} install`, pkgRoot);
 	}
 
 	// Run NPM build script if it exists
@@ -155,8 +154,8 @@ const runAction = () => {
 		log("Skipping build script because `skip_build` option is set");
 	} else {
 		log("Running the build script…");
-		if (pacMan) {
-			run(`npm run ${buildScriptName} --if-present`, pkgRoot);
+		if (pacMan != PackageManager.YARN) {
+			run(`${pacMan} run ${buildScriptName} --if-present`, pkgRoot);
 		} else {
 			// TODO: Use `yarn run ${buildScriptName} --if-present` once supported
 			// https://github.com/yarnpkg/yarn/issues/6894
@@ -168,15 +167,21 @@ const runAction = () => {
 	}
 
 	log(`Building${release ? " and releasing" : ""} the Electron app…`);
-	const cmd = useVueCli ? "vue-cli-service electron:build" : "electron-builder";
+	let cmd;
+	const builder = useVueCli ? "vue-cli-service electron:build" : "electron-builder";
+	const flags = `--${platform} ${release ? "--publish always" : ""}`;
+
+	if (pacMan == PackageManager.NPM) {
+		cmd = "npx --no-install";
+	} else if (PackageManager.YARN) {
+		cmd = "yarn run";
+	} else {
+		cmd = "pnpx --no-install";
+	}
+
 	for (let i = 0; i < maxAttempts; i += 1) {
 		try {
-			run(
-				`${pacMan ? "npx --no-install" : "yarn run"} ${cmd} --${platform} ${
-					release ? "--publish always" : ""
-				} ${args}`,
-				appRoot,
-			);
+			run(`${cmd} ${builder} ${flags} ${args}`, appRoot);
 			break;
 		} catch (err) {
 			if (i < maxAttempts - 1) {
