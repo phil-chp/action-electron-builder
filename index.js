@@ -65,9 +65,9 @@ const getInput = (name, required) => {
  */
 const PackageManager = Object.freeze({
 	NONE: "none", // Error handling
-  NPM: "npm",
-  YARN: "yarn",
-  PNPM: "pnpm"
+	NPM: "npm",
+	YARN: "yarn",
+	PNPM: "pnpm",
 });
 
 /**
@@ -123,7 +123,9 @@ const runAction = () => {
 	// Determine whether NPM should be used to run commands (instead of Yarn, which is the default)
 	const pacMan = determinePackageManager(pkgRoot, PackageManager.YARN);
 	if (pacMan === PackageManager.NONE) {
-		exit("No lock file found and no fallback package manager specified. Please first install your dependencies (i.e. `npm install`)");
+		exit(
+			"No lock file found and no fallback package manager specified. Please first install your dependencies (i.e. `npm install`)",
+		);
 	}
 	log(`Will run ${pacMan} commands in directory "${pkgRoot}"`);
 
@@ -155,7 +157,7 @@ const runAction = () => {
 	} else {
 		log("Running the build script…");
 		if (pacMan != PackageManager.YARN) {
-			run(`${pacMan} run ${buildScriptName} --if-present`, pkgRoot);
+			run(`${pacMan} run --if-present ${buildScriptName}`, pkgRoot);
 		} else {
 			// TODO: Use `yarn run ${buildScriptName} --if-present` once supported
 			// https://github.com/yarnpkg/yarn/issues/6894

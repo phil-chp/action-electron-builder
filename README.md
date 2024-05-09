@@ -70,6 +70,8 @@ When you want to create a new release, follow these steps:
 
 After building successfully, the action will publish your release artifacts. By default, a new release draft will be created on GitHub with download links for your app. If you want to change this behavior, have a look at the [`electron-builder` docs](https://www.electron.build).
 
+Please note that yarn is the default package manager, but auto-detection is in place depending on your lock file (We currently handle: `npm`, `yarn`, `pnpm`)
+
 ## Configuration
 
 ### Options
