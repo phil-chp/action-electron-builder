@@ -61,6 +61,40 @@ const getInput = (name, required) => {
 };
 
 /**
+ * "enum" for package managers
+ */
+const PackageManager = Object.freeze({
+	NONE: "none", // Error handling
+  NPM: "npm",
+  YARN: "yarn",
+  PNPM: "pnpm"
+});
+
+/**
+ * Determines whether NPM, Yarn or PNPM should be used to run commands
+ * @param {string | null} pkgRoot
+ * @param {PackageManager?} fallback
+ * @returns {PackageManager}
+ */
+const determinePackageManager = (pkgRoot, fallback) => {
+	const pkgNPMPath = join(pkgRoot, "package-lock.json");
+	const pkgYarnPath = join(pkgRoot, "yarn.lock");
+	const pkgPNPMPath = join(pkgRoot, "pnpm-lock.yaml");
+	let pacMan;
+
+	if (existsSync(pkgNPMPath)) {
+		pacMan = PackageManager.NPM;
+	} else if (existsSync(pkgYarnPath)) {
+		pacMan = PackageManager.YARN;
+	} else if (existsSync(pkgPNPMPath)) {
+		pacMan = PackageManager.PNPM;
+	} else {
+		pacMan = fallback || PackageManager.NONE;
+	}
+	return pacMan;
+};
+
+/**
  * Installs NPM dependencies and builds/releases the Electron app
  */
 const runAction = () => {
@@ -80,16 +114,19 @@ const runAction = () => {
 	const appRoot = getInput("app_root") || pkgRoot;
 
 	const pkgJsonPath = join(pkgRoot, "package.json");
-	const pkgLockPath = join(pkgRoot, "package-lock.json");
-
-	// Determine whether NPM should be used to run commands (instead of Yarn, which is the default)
-	const useNpm = existsSync(pkgLockPath);
-	log(`Will run ${useNpm ? "NPM" : "Yarn"} commands in directory "${pkgRoot}"`);
 
 	// Make sure `package.json` file exists
 	if (!existsSync(pkgJsonPath)) {
 		exit(`\`package.json\` file not found at path "${pkgJsonPath}"`);
 	}
+
+	// Determine whether NPM should be used to run commands (instead of Yarn, which is the default)
+	const pacMan = determinePackageManager(pkgRoot, PackageManager.YARN);
+	if (pacMan === PackageManager.NONE) {
+		exit("No lock file found and no fallback package manager specified. Please first install your dependencies (i.e. `npm install`)");
+	}
+	log(`Will run ${PackageManager[pacMan]} commands in directory "${pkgRoot}"`);
+	return;
 
 	// Copy "github_token" input variable to "GH_TOKEN" env variable (required by `electron-builder`)
 	setEnv("GH_TOKEN", getInput("github_token", true));
@@ -109,8 +146,8 @@ const runAction = () => {
 	if (skipInstall) {
 		log("Skipping install script because `skip_install` option is set");
 	} else {
-		log(`Installing dependencies using ${useNpm ? "NPM" : "Yarn"}…`);
-		run(useNpm ? "npm install" : "yarn", pkgRoot);
+		log(`Installing dependencies using ${pacMan ? "NPM" : "Yarn"}…`);
+		run(pacMan ? "npm install" : "yarn", pkgRoot);
 	}
 
 	// Run NPM build script if it exists
@@ -118,7 +155,7 @@ const runAction = () => {
 		log("Skipping build script because `skip_build` option is set");
 	} else {
 		log("Running the build script…");
-		if (useNpm) {
+		if (pacMan) {
 			run(`npm run ${buildScriptName} --if-present`, pkgRoot);
 		} else {
 			// TODO: Use `yarn run ${buildScriptName} --if-present` once supported
@@ -135,7 +172,7 @@ const runAction = () => {
 	for (let i = 0; i < maxAttempts; i += 1) {
 		try {
 			run(
-				`${useNpm ? "npx --no-install" : "yarn run"} ${cmd} --${platform} ${
+				`${pacMan ? "npx --no-install" : "yarn run"} ${cmd} --${platform} ${
 					release ? "--publish always" : ""
 				} ${args}`,
 				appRoot,
@@ -152,5 +189,4 @@ const runAction = () => {
 	}
 };
 
-log("This is a pretty weird scenario, I've never tested custom forked github actions, especially since it's a forked fork, just testing to make sure it works before going further");
-// runAction();
+runAction();
