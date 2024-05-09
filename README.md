@@ -2,7 +2,7 @@
 
 THIS IS A FORK! :)
 
-[![Test](https://github.com/paneron/action-electron-builder/actions/workflows/test.yml/badge.svg)](https://github.com/paneron/action-electron-builder/actions/workflows/test.yml)
+[![Test](https://github.com/johannesjo/action-electron-builder/actions/workflows/test.yml/badge.svg)](https://github.com/johannesjo/action-electron-builder/actions/workflows/test.yml)
 
 **GitHub Action for building and releasing Electron apps**
 
