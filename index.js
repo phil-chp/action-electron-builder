@@ -152,4 +152,5 @@ const runAction = () => {
 	}
 };
 
-runAction();
+log("This is a pretty weird scenario, I've never tested custom forked github actions, especially since it's a forked fork, just testing to make sure it works before going further");
+// runAction();
